@@ -31,6 +31,8 @@ class Compra(
     @field:NotNull @field:Min(1) val numeroDeParcelas: Int,
     @field:NotNull @Enumerated(STRING) val formaDePagamento: FormaDePagamento,
     @field:NotNull @field:Positive val valor: BigDecimal,
+    @field:NotNull val fixa: Boolean = false,
+    @field:NotNull val valorVariavel: Boolean = false,
     @field:Valid @ManyToOne val conta: Conta? = null,
     @field:Valid @ManyToOne val cartao: Cartao? = null
 ) {

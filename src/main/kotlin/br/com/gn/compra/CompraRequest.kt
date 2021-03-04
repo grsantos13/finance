@@ -3,7 +3,6 @@ package br.com.gn.compra
 import br.com.gn.cartao.Cartao
 import br.com.gn.cartao.CartaoResponse
 import br.com.gn.categoria.Categoria
-import br.com.gn.categoria.CategoriaRepository
 import br.com.gn.categoria.CategoriaResponse
 import br.com.gn.compra.transacao.Transacao
 import br.com.gn.conta.Conta
@@ -15,9 +14,7 @@ import io.micronaut.http.exceptions.HttpStatusException
 import java.math.BigDecimal
 import java.time.LocalDate
 import javax.persistence.EntityManager
-import javax.transaction.Transactional
 import javax.validation.constraints.FutureOrPresent
-import javax.validation.constraints.Max
 import javax.validation.constraints.Min
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
@@ -36,6 +33,8 @@ data class CompraRequest(
     @field:FutureOrPresent val vencimento: LocalDate? = null,
     @field:ExistsResource(field = "id", domainClass = Cartao::class) val idCartao: Long? = null,
     @field:ExistsResource(field = "id", domainClass = Conta::class) val idConta: Long? = null,
+    @field:NotNull val fixa: Boolean = false,
+    @field:NotNull val valorVariavel: Boolean = false,
     val statusPagamento: StatusPagamento? = null
 ) {
 
@@ -62,7 +61,9 @@ data class CompraRequest(
             formaDePagamento = formaDePagamento,
             conta = conta,
             cartao = cartao,
-            valor = valor
+            valor = valor,
+            fixa = fixa,
+            valorVariavel = valorVariavel
         )
     }
 }
@@ -76,13 +77,17 @@ class CompraResponse(compra: Compra) {
     val formaDePagamento: FormaDePagamento = compra.formaDePagamento
     val valor: BigDecimal = compra.valor
     val conta: String? = compra.conta?.nome
-    val cartao: CartaoResponse? = if (compra.cartao == null ) null else CartaoResponse(cartao = compra.cartao)
+    val cartao: CartaoResponse? = if (compra.cartao == null) null else CartaoResponse(cartao = compra.cartao)
+    val fixa = compra.fixa
+    val valorVariavel = compra.valorVariavel
     val transacoes: List<TransacaoResponse> = compra.transacoes.map { transacao -> TransacaoResponse(transacao) }
 }
 
-class TransacaoResponse(transacao: Transacao){
+class TransacaoResponse(transacao: Transacao) {
     val id = transacao.id!!
     val valor = transacao.valor
-    @JsonFormat(pattern = "yyyy-MM-dd") val vencimento = transacao.vencimento
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    val vencimento = transacao.vencimento
     val status = transacao.status
 }
