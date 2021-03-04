@@ -2,13 +2,8 @@ package br.com.gn.compra
 
 import br.com.gn.cartao.Cartao
 import br.com.gn.categoria.Categoria
-import br.com.gn.compra.FormaDePagamento.CREDITO
-import br.com.gn.compra.StatusPagamento.PENDENTE
 import br.com.gn.compra.transacao.Transacao
 import br.com.gn.conta.Conta
-import io.micronaut.http.HttpStatus.BAD_REQUEST
-import io.micronaut.http.HttpStatus.PRECONDITION_FAILED
-import io.micronaut.http.exceptions.HttpStatusException
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
@@ -52,33 +47,15 @@ class Compra(
     @OneToMany(mappedBy = "compra", cascade = [PERSIST])
     val transacoes: MutableList<Transacao> = mutableListOf()
 
-    init {
-        var status: StatusPagamento? = status
-        var primeiroVencimento: LocalDate = vencimento ?: LocalDate.now()
-
-        if (formaDePagamento == CREDITO) {
-            precondicaoCredito()
-            status = status ?: PENDENTE
-            primeiroVencimento = verificarPrimeiroVencimento()
-        } else {
-            precodicaoDemais(status)
-        }
-
-        gerarTransacoes(primeiroVencimento, status)
+    fun precondicaoCredito(): Boolean {
+        return cartao != null && conta == null
     }
 
-    private fun precondicaoCredito() {
-        if (cartao == null) throw HttpStatusException(PRECONDITION_FAILED, "Cartão não informado")
-        if (conta != null) throw HttpStatusException(PRECONDITION_FAILED, "Conta informada para transação com cartão de crédito")
+    fun precodicaoNaoCredito(status: StatusPagamento?): Boolean {
+        return cartao == null && status != null
     }
 
-    private fun precodicaoDemais(status: StatusPagamento?){
-        if (cartao != null) throw HttpStatusException(PRECONDITION_FAILED, "Cartão informado para compras que não são com cartão de crédito")
-        if (status == null)throw HttpStatusException(BAD_REQUEST, "Status não informado para a compra.")
-
-    }
-
-    private fun verificarPrimeiroVencimento(): LocalDate {
+    fun verificarPrimeiroVencimento(): LocalDate {
         var vencimento: LocalDate? = null
 
         if (realizadaEm.dayOfMonth.compareTo(cartao!!.diaFechamento) < 1) {
@@ -103,7 +80,7 @@ class Compra(
         return vencimento
     }
 
-    private fun gerarTransacoes(primeiroVencimento: LocalDate?, status: StatusPagamento?) {
+    fun gerarTransacoes(primeiroVencimento: LocalDate?, status: StatusPagamento?) {
         for (i in 1..numeroDeParcelas) {
             val valor: BigDecimal = this.valor.divide(
                 numeroDeParcelas.toBigDecimal(),
