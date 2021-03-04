@@ -12,10 +12,16 @@ import javax.validation.constraints.NotNull
 @Entity
 class Cartao(
     @field:NotBlank val nome: String,
-    @field:NotNull @Min(1) @Max(31) var diaVencimento: Int,
-    @field:NotNull @Min(1) @Max(31) var diaFechamento: Int,
-    @field:NotNull var mesVencimentoMesmoFechamento: Boolean
+    @NotNull @Min(1) @Max(31) diaVencimento: Int,
+    @NotNull @Min(1) @Max(31) diaFechamento: Int,
+    @NotNull mesVencimentoMesmoFechamento: Boolean
 ) {
+    @field:NotNull @Min(1) @Max(31) var diaVencimento: Int = diaVencimento
+    private set
+    @field:NotNull @Min(1) @Max(31) var diaFechamento: Int = diaFechamento
+    private set
+    @field:NotNull var mesVencimentoMesmoFechamento: Boolean = mesVencimentoMesmoFechamento
+    private set
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

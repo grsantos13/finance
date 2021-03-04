@@ -6,6 +6,8 @@ import br.com.gn.categoria.Categoria
 import br.com.gn.categoria.CategoriaResponse
 import br.com.gn.conta.Conta
 import br.com.gn.despesa.transacao.Transacao
+import br.com.gn.pagamento.FormaDePagamento
+import br.com.gn.pagamento.StatusPagamento
 import br.com.gn.shared.validation.ExistsResource
 import com.fasterxml.jackson.annotation.JsonFormat
 import io.micronaut.core.annotation.Introspected
@@ -69,6 +71,8 @@ data class DespesaRequest(
 }
 
 class DespesaResponse(despesa: Despesa) {
+    val id = despesa.id!!
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     val realizadaEm: LocalDate = despesa.realizadaEm
     val categoria: CategoriaResponse = CategoriaResponse(despesa.categoria)

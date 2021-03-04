@@ -5,5 +5,5 @@ import io.micronaut.data.jpa.repository.JpaRepository
 
 @Repository
 interface DespesaRepository : JpaRepository<Despesa, Long> {
-    fun findByFixa(b: Boolean): List<Despesa>
+    fun findByFixa(fixa: Boolean): List<Despesa>
 }

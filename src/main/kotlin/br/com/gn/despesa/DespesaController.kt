@@ -1,5 +1,7 @@
 package br.com.gn.despesa
 
+import br.com.gn.pagamento.FormaDePagamento
+import br.com.gn.pagamento.StatusPagamento
 import io.micronaut.data.model.Page
 import io.micronaut.data.model.Pageable
 import io.micronaut.http.HttpResponse

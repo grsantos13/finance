@@ -1,4 +1,4 @@
-package br.com.gn.despesa
+package br.com.gn.pagamento
 
 enum class StatusPagamento {
     PLANEJADO, PENDENTE, REALIZADO
