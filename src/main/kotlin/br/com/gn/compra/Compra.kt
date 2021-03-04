@@ -32,11 +32,8 @@ class Compra(
     @field:NotNull @Enumerated(STRING) val formaDePagamento: FormaDePagamento,
     @field:NotNull @field:Positive val valor: BigDecimal,
     @field:Valid @ManyToOne val conta: Conta? = null,
-    @field:Valid @ManyToOne val cartao: Cartao? = null,
-    vencimento: LocalDate? = null,
-    status: StatusPagamento? = null
+    @field:Valid @ManyToOne val cartao: Cartao? = null
 ) {
-
 
     @Id
     @GeneratedValue(strategy = IDENTITY)

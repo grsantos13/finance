@@ -62,9 +62,7 @@ data class CompraRequest(
             formaDePagamento = formaDePagamento,
             conta = conta,
             cartao = cartao,
-            valor = valor,
-            vencimento = vencimento,
-            status = statusPagamento
+            valor = valor
         )
     }
 }
