@@ -43,10 +43,41 @@ class DespesaController(
                 throw HttpStatusException(PRECONDITION_FAILED, "Cartão preenchido ou conta não preenchida.")
         }
 
-        despesa.gerarTransacoes(primeiroVencimento, status)
+        despesa.gerarTransacoes(
+            primeiroVencimento = primeiroVencimento,
+            status = status
+        )
         repository.save(despesa)
 
         return HttpResponse.created(DespesaResponse(despesa))
+    }
+
+    @Post("/fixas")
+    @Transactional
+    fun addDespesasFixas(@Body @Valid request: List<DespesaFixaRequest>): HttpResponse<List<DespesaResponse>> {
+        val list : MutableList<Despesa> = mutableListOf()
+        request.forEach {
+            if (!it.fixa) throw HttpStatusException(PRECONDITION_FAILED, "Tentando cadastrar despesas não fixas.")
+
+            val despesa = it.toModel(manager)
+                ?: throw HttpStatusException(PRECONDITION_FAILED, "Tentando cadastrar despesas fixas com bases não fixas.")
+
+            var status = it.statusPagamento
+            var primeiroVencimento: LocalDate = it.vencimento ?: LocalDate.now()
+
+            if (!despesa.precodicaoNaoCredito(it.statusPagamento))
+                throw HttpStatusException(PRECONDITION_FAILED, "Cartão preenchido ou conta não preenchida.")
+
+            despesa.gerarTransacoes(
+                primeiroVencimento = primeiroVencimento,
+                status = status
+            )
+
+            list.add(despesa)
+        }
+
+        repository.saveAll(list)
+        return HttpResponse.ok(list.map(::DespesaResponse))
     }
 
     @Get("/fixas")
