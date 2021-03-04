@@ -1,11 +1,11 @@
-package br.com.gn.compra
+package br.com.gn.despesa
 
 import br.com.gn.cartao.Cartao
 import br.com.gn.cartao.CartaoResponse
 import br.com.gn.categoria.Categoria
 import br.com.gn.categoria.CategoriaResponse
-import br.com.gn.compra.transacao.Transacao
 import br.com.gn.conta.Conta
+import br.com.gn.despesa.transacao.Transacao
 import br.com.gn.shared.validation.ExistsResource
 import com.fasterxml.jackson.annotation.JsonFormat
 import io.micronaut.core.annotation.Introspected
@@ -23,7 +23,7 @@ import javax.validation.constraints.Positive
 import javax.validation.constraints.Size
 
 @Introspected
-data class CompraRequest(
+data class DespesaRequest(
     @field:NotNull @field:PastOrPresent val realizadaEm: LocalDate = LocalDate.now(),
     @field:NotNull @field:ExistsResource(field = "id", domainClass = Categoria::class) val idCategoria: Long,
     @field:NotBlank @field:Size(max = 100) val descricao: String,
@@ -38,7 +38,7 @@ data class CompraRequest(
     val statusPagamento: StatusPagamento? = null
 ) {
 
-    fun toModel(manager: EntityManager): Compra {
+    fun toModel(manager: EntityManager): Despesa {
         val categoria = manager.find(Categoria::class.java, idCategoria)
             ?: throw HttpStatusException(NOT_FOUND, "Categoria não encontrada para o id $idCategoria")
 
@@ -53,7 +53,7 @@ data class CompraRequest(
             conta = manager.find(Conta::class.java, idConta)
                 ?: throw HttpStatusException(NOT_FOUND, "Cartão não encontrado para o id $idConta")
 
-        return Compra(
+        return Despesa(
             realizadaEm = realizadaEm,
             categoria = categoria,
             descricao = descricao,
@@ -68,19 +68,19 @@ data class CompraRequest(
     }
 }
 
-class CompraResponse(compra: Compra) {
+class DespesaResponse(despesa: Despesa) {
     @JsonFormat(pattern = "yyyy-MM-dd")
-    val realizadaEm: LocalDate = compra.realizadaEm
-    val categoria: CategoriaResponse = CategoriaResponse(compra.categoria)
-    val descricao: String = compra.descricao
-    val numeroDeParcelas: Int = compra.numeroDeParcelas
-    val formaDePagamento: FormaDePagamento = compra.formaDePagamento
-    val valor: BigDecimal = compra.valor
-    val conta: String? = compra.conta?.nome
-    val cartao: CartaoResponse? = if (compra.cartao == null) null else CartaoResponse(cartao = compra.cartao)
-    val fixa = compra.fixa
-    val valorVariavel = compra.valorVariavel
-    val transacoes: List<TransacaoResponse> = compra.transacoes.map { transacao -> TransacaoResponse(transacao) }
+    val realizadaEm: LocalDate = despesa.realizadaEm
+    val categoria: CategoriaResponse = CategoriaResponse(despesa.categoria)
+    val descricao: String = despesa.descricao
+    val numeroDeParcelas: Int = despesa.numeroDeParcelas
+    val formaDePagamento: FormaDePagamento = despesa.formaDePagamento
+    val valor: BigDecimal = despesa.valor
+    val conta: String? = despesa.conta?.nome
+    val cartao: CartaoResponse? = if (despesa.cartao == null) null else CartaoResponse(cartao = despesa.cartao)
+    val fixa = despesa.fixa
+    val valorVariavel = despesa.valorVariavel
+    val transacoes: List<TransacaoResponse> = despesa.transacoes.map { transacao -> TransacaoResponse(transacao) }
 }
 
 class TransacaoResponse(transacao: Transacao) {

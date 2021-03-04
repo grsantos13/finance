@@ -1,8 +1,8 @@
-package br.com.gn.compra
+package br.com.gn.despesa
 
 import br.com.gn.cartao.Cartao
 import br.com.gn.categoria.Categoria
-import br.com.gn.compra.transacao.Transacao
+import br.com.gn.despesa.transacao.Transacao
 import br.com.gn.conta.Conta
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -24,7 +24,7 @@ import javax.validation.constraints.Positive
 import javax.validation.constraints.Size
 
 @Entity
-class Compra(
+class Despesa(
     @field:NotNull val realizadaEm: LocalDate = LocalDate.now(),
     @field:NotNull @field:Valid @ManyToOne val categoria: Categoria,
     @field:NotBlank @field:Size(max = 100) val descricao: String,
@@ -43,7 +43,7 @@ class Compra(
 
     @field:Valid
     @field:Size(min = 1)
-    @OneToMany(mappedBy = "compra", cascade = [PERSIST])
+    @OneToMany(mappedBy = "despesa", cascade = [PERSIST])
     val transacoes: MutableList<Transacao> = mutableListOf()
 
     fun precondicaoCredito(): Boolean {

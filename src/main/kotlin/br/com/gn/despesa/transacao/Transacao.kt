@@ -1,7 +1,7 @@
-package br.com.gn.compra.transacao
+package br.com.gn.despesa.transacao
 
-import br.com.gn.compra.Compra
-import br.com.gn.compra.StatusPagamento
+import br.com.gn.despesa.Despesa
+import br.com.gn.despesa.StatusPagamento
 import java.math.BigDecimal
 import java.time.LocalDate
 import javax.persistence.Entity
@@ -20,7 +20,7 @@ class Transacao(
     @field:Valid
     @field:NotNull
     @ManyToOne
-    val compra: Compra,
+    val despesa: Despesa,
     @field:Positive
     @field:NotNull
     val valor: BigDecimal,

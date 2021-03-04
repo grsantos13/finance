@@ -1,4 +1,4 @@
-package br.com.gn.compra
+package br.com.gn.despesa
 
 import io.micronaut.data.model.Page
 import io.micronaut.data.model.Pageable
@@ -16,50 +16,50 @@ import javax.transaction.Transactional
 import javax.validation.Valid
 
 @Validated
-@Controller("/compras")
-class CompraController(
-    private val repository: CompraRepository,
-    private val manager: EntityManager
+@Controller("/despesas")
+class DespesaController(
+    private val repository: DespesaRepository,
+    private val manager: EntityManager,
 ) {
 
     @Post
     @Transactional
-    fun criar(@Body @Valid request: CompraRequest): HttpResponse<CompraResponse> {
-        val compra = request.toModel(manager)
+    fun criar(@Body @Valid request: DespesaRequest): HttpResponse<DespesaResponse> {
+        val despesa = request.toModel(manager)
         var status = request.statusPagamento
         var primeiroVencimento: LocalDate = request.vencimento ?: LocalDate.now()
 
-        if (compra.formaDePagamento == FormaDePagamento.CREDITO) {
-            if (!compra.precondicaoCredito())
+        if (despesa.formaDePagamento == FormaDePagamento.CREDITO) {
+            if (!despesa.precondicaoCredito())
                 throw HttpStatusException(PRECONDITION_FAILED, "Cartão não preenchido ou conta preenchida.")
 
             status = request.statusPagamento ?: StatusPagamento.PENDENTE
-            primeiroVencimento = compra.verificarPrimeiroVencimento()
+            primeiroVencimento = despesa.verificarPrimeiroVencimento()
 
         } else {
-            if (!compra.precodicaoNaoCredito(request.statusPagamento))
+            if (!despesa.precodicaoNaoCredito(request.statusPagamento))
                 throw HttpStatusException(PRECONDITION_FAILED, "Cartão preenchido ou conta não preenchida.")
         }
 
-        compra.gerarTransacoes(primeiroVencimento, status)
-        repository.save(compra)
+        despesa.gerarTransacoes(primeiroVencimento, status)
+        repository.save(despesa)
 
-        return HttpResponse.created(CompraResponse(compra))
+        return HttpResponse.created(DespesaResponse(despesa))
     }
 
     @Get("/fixas")
     @Transactional
-    fun buscaComprasFixas(): HttpResponse<List<CompraResponse>> {
+    fun buscaDespesasFixas(): HttpResponse<List<DespesaResponse>> {
         val contasFixas = repository.findByFixa(true)
-            .map { compra -> CompraResponse(compra) }
+            .map { despesa -> DespesaResponse(despesa) }
         return HttpResponse.ok(contasFixas)
     }
 
     @Get
     @Transactional
-    fun buscaCompras(pageable: Pageable): HttpResponse<Page<CompraResponse>> {
+    fun buscaDespesas(pageable: Pageable): HttpResponse<Page<DespesaResponse>> {
         val page = repository.findAll(pageable)
-            .map { compra -> CompraResponse(compra) }
+            .map { despesa -> DespesaResponse(despesa) }
         return HttpResponse.ok(page)
     }
 }
