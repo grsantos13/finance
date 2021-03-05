@@ -10,9 +10,12 @@ import io.micronaut.http.annotation.PathVariable
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.QueryValue
 import io.micronaut.http.exceptions.HttpStatusException
+import io.micronaut.security.annotation.Secured
+import io.micronaut.security.rules.SecurityRule
 import io.micronaut.validation.Validated
 import javax.validation.Valid
 
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Validated
 @Controller("/categorias")
 class CategoriaController(private val repository: CategoriaRepository) {

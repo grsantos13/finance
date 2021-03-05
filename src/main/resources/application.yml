@@ -13,7 +13,16 @@ micronaut:
   server:
     cors:
       enabled: true
-
+  security:
+    authentication: bearer
+    token:
+      roles-name: 'scope'
+      jwt:
+        enabled: true
+        signatures:
+          jwks:
+            keycloak:
+              url: 'http://localhost:18080/auth/realms/nosso-cartao/protocol/openid-connect/certs'
 
 datasources:
   default:

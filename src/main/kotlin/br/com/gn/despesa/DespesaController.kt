@@ -13,6 +13,8 @@ import io.micronaut.http.annotation.Post
 import io.micronaut.http.exceptions.HttpStatusException
 import io.micronaut.validation.Validated
 import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.*
 import javax.persistence.EntityManager
 import javax.transaction.Transactional
 import javax.validation.Valid
@@ -24,10 +26,35 @@ class DespesaController(
     private val manager: EntityManager,
 ) {
 
+    private fun validarCategoriaDuplicadaNoMes(despesa: Despesa) {
+        val categoria = despesa.categoria
+
+        if (categoria.umaPorMes) {
+            val inicio = despesa.realizadaEm.withDayOfMonth(1)
+            val fim = despesa.realizadaEm.withDayOfMonth(despesa.realizadaEm.lengthOfMonth())
+            val existeLancamento =
+                repository.existsByCategoriaIdAndRealizadaEmBetween(
+                    id = despesa.categoria.id!!,
+                    inicio = inicio,
+                    fim = fim
+                )
+
+            if (existeLancamento) {
+                val mes = despesa.realizadaEm.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
+                throw HttpStatusException(
+                    PRECONDITION_FAILED,
+                    "Já existe um lançamento para a categoria ${categoria.nome} em $mes de ${despesa.realizadaEm.year}"
+                )
+            }
+        }
+
+    }
+
     @Post
     @Transactional
     fun criar(@Body @Valid request: NovaDespesaRequest): HttpResponse<DespesaResponse> {
         val despesa = request.toModel(manager)
+        validarCategoriaDuplicadaNoMes(despesa)
         var status = request.statusPagamento
         var primeiroVencimento: LocalDate = request.vencimento ?: LocalDate.now()
 
@@ -55,12 +82,15 @@ class DespesaController(
     @Post("/fixas")
     @Transactional
     fun addDespesasFixas(@Body @Valid request: List<DespesaFixaRequest>): HttpResponse<List<DespesaResponse>> {
-        val list : MutableList<Despesa> = mutableListOf()
+        val list: MutableList<Despesa> = mutableListOf()
         request.forEach {
             if (!it.fixa) throw HttpStatusException(PRECONDITION_FAILED, "Tentando cadastrar despesas não fixas.")
 
             val despesa = it.toModel(manager)
-                ?: throw HttpStatusException(PRECONDITION_FAILED, "Tentando cadastrar despesas fixas com bases não fixas.")
+                ?: throw HttpStatusException(
+                    PRECONDITION_FAILED,
+                    "Tentando cadastrar despesas fixas com bases não fixas."
+                )
 
             var status = it.statusPagamento
             var primeiroVencimento: LocalDate = it.vencimento ?: LocalDate.now()
