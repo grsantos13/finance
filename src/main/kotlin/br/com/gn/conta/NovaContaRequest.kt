@@ -5,7 +5,7 @@ import io.micronaut.core.annotation.Introspected
 import javax.validation.constraints.NotBlank
 
 @Introspected
-data class ContaRequest(
+data class NovaContaRequest(
     @field:NotBlank
     @field:Unique(field = "nome", domainClass = Conta::class)
     val nome: String
@@ -15,7 +15,3 @@ data class ContaRequest(
     }
 }
 
-class ContaResponse(conta: Conta) {
-    val id = conta.id
-    val nome = conta.nome
-}

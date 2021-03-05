@@ -3,19 +3,18 @@ package br.com.gn.categoria
 import br.com.gn.shared.validation.Unique
 import io.micronaut.core.annotation.Introspected
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.NotNull
 
 @Introspected
-data class CategoriaRequest(
+data class NovaCategoriaRequest(
     @field:NotBlank
     @field:Unique(field = "nome", domainClass = Categoria::class)
-    val nome: String
+    val nome: String,
+    @field:NotNull
+    val umaPorMes: Boolean
 ) {
     fun toModel(): Categoria {
-        return Categoria(nome = nome)
+        return Categoria(nome = nome, umaPorMes = umaPorMes)
     }
 }
 
-class CategoriaResponse(categoria: Categoria) {
-    val nome = categoria.nome
-    val id = categoria.id
-}

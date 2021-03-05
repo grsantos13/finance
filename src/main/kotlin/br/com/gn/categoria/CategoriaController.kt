@@ -18,7 +18,7 @@ import javax.validation.Valid
 class CategoriaController(private val repository: CategoriaRepository) {
 
     @Post
-    fun cadastrar(@Body @Valid request: CategoriaRequest): HttpResponse<CategoriaResponse> {
+    fun cadastrar(@Body @Valid request: NovaCategoriaRequest): HttpResponse<CategoriaResponse> {
         val categoria = request.toModel()
         repository.save(categoria)
         return HttpResponse.created(CategoriaResponse(categoria))

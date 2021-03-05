@@ -21,7 +21,7 @@ class EntradaController(
 
     @Post
     @Transactional
-    fun cadastrar(@Body @Valid request: EntradaRequest): HttpResponse<EntradaResponse> {
+    fun cadastrar(@Body @Valid request: NovaEntradaRequest): HttpResponse<EntradaResponse> {
         val entrada = request.toModel(entityManager)
         repository.save(entrada)
         return HttpResponse.created(EntradaResponse(entrada))

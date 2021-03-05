@@ -16,7 +16,7 @@ class ContaController(private val manager: EntityManager) {
 
     @Post
     @Transactional
-    fun cadastrar(@Body @Valid request: ContaRequest): HttpResponse<ContaResponse> {
+    fun cadastrar(@Body @Valid request: NovaContaRequest): HttpResponse<ContaResponse> {
         val conta = request.toModel()
         manager.persist(conta)
         return HttpResponse.created(ContaResponse(conta))

@@ -16,7 +16,7 @@ import javax.validation.Valid
 class CartaoController(private val repository: CartaoRepository) {
 
     @Post
-    fun cadastrar(@Body @Valid request: CartaoRequest): HttpResponse<CartaoResponse> {
+    fun cadastrar(@Body @Valid request: NovoCartaoRequest): HttpResponse<CartaoResponse> {
         val cartao = request.toModel()
         repository.save(cartao)
         return HttpResponse.created(CartaoResponse(cartao))

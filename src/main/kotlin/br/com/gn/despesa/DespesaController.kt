@@ -26,7 +26,7 @@ class DespesaController(
 
     @Post
     @Transactional
-    fun criar(@Body @Valid request: DespesaRequest): HttpResponse<DespesaResponse> {
+    fun criar(@Body @Valid request: NovaDespesaRequest): HttpResponse<DespesaResponse> {
         val despesa = request.toModel(manager)
         var status = request.statusPagamento
         var primeiroVencimento: LocalDate = request.vencimento ?: LocalDate.now()
