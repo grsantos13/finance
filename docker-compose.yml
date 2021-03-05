@@ -1,0 +1,29 @@
+version: '3'
+services:
+  postgres:
+    image: 'postgres:alpine'
+    volumes:
+      - postgresfinance-volume:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: finance
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: finance
+      POSTGRES_HOST: postgres
+
+  finance:
+    image: gustavosantoszup/finance
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    ports:
+      - 8080:8080
+    environment:
+      MICRONAUT_ENVIRONMENTS: prod
+      DB_URL: jdbc:postgresql://postgres:5432/finance
+      DB_USERNAME: finance
+      DB_PASSWORD: password
+
+volumes:
+  postgresfinance-volume:

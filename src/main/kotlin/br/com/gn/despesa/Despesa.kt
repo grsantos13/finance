@@ -57,7 +57,7 @@ class Despesa(
     }
 
     fun verificarPrimeiroVencimento(): LocalDate {
-        var vencimento: LocalDate? = null
+        var vencimento: LocalDate?
 
         if (realizadaEm.dayOfMonth.compareTo(cartao!!.diaFechamento) < 1) {
 
