@@ -17,20 +17,22 @@ class CategoriaDuplicadaNoMesValidator(private val manager: EntityManager) {
         realizadaEm: LocalDate,
         entidade: String
     ) {
-        val query = manager.createQuery(
-            " select 1 from $entidade c where c.categoria.id = :idCategoria " +
-                    " and c.realizadaEm between :inicio and :fim "
-        )
-        query.setParameter("inicio", realizadaEm.withDayOfMonth(1))
-        query.setParameter("fim", realizadaEm.withDayOfMonth(realizadaEm.lengthOfMonth()))
-        query.setParameter("idCategoria", categoria.id)
-        val existeLancamento = query.resultList.isNotEmpty()
-        if (existeLancamento) {
-            val mes = realizadaEm.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
-            throw HttpStatusException(
-                HttpStatus.PRECONDITION_FAILED,
-                "Já existe um lançamento para a categoria ${categoria.nome} em $mes de ${realizadaEm.year}"
+        if (categoria.umaPorMes) {
+            val query = manager.createQuery(
+                " select 1 from $entidade c where c.categoria.id = :idCategoria " +
+                        " and c.realizadaEm between :inicio and :fim "
             )
+            query.setParameter("inicio", realizadaEm.withDayOfMonth(1))
+            query.setParameter("fim", realizadaEm.withDayOfMonth(realizadaEm.lengthOfMonth()))
+            query.setParameter("idCategoria", categoria.id)
+            val existeLancamento = query.resultList.isNotEmpty()
+            if (existeLancamento) {
+                val mes = realizadaEm.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
+                throw HttpStatusException(
+                    HttpStatus.PRECONDITION_FAILED,
+                    "Já existe um lançamento para a categoria ${categoria.nome} em $mes de ${realizadaEm.year}"
+                )
+            }
         }
 
     }
