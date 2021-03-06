@@ -4,6 +4,7 @@ import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus.NOT_FOUND
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.PathVariable
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Put
@@ -34,5 +35,12 @@ class CartaoController(private val repository: CartaoRepository) {
         repository.update(cartao)
 
         return HttpResponse.ok(CartaoResponse(cartao))
+    }
+
+    @Get
+    fun buscaCartoes(): HttpResponse<List<CartaoResponse>>{
+        val list = repository.findAll()
+            .map { CartaoResponse(it) }
+        return HttpResponse.ok(list)
     }
 }
