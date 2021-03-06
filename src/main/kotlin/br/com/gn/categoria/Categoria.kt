@@ -1,6 +1,8 @@
 package br.com.gn.categoria
 
 import javax.persistence.Entity
+import javax.persistence.EnumType.STRING
+import javax.persistence.Enumerated
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType.IDENTITY
 import javax.persistence.Id
@@ -12,7 +14,10 @@ class Categoria(
     @field:NotBlank
     val nome: String,
     @field:NotNull
-    val umaPorMes: Boolean
+    val umaPorMes: Boolean,
+    @field:NotNull
+    @Enumerated(STRING)
+    val movimento: Movimento
 ) {
     @Id
     @GeneratedValue(strategy = IDENTITY)

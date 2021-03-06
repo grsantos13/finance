@@ -25,7 +25,7 @@ import javax.validation.Valid
 class DespesaController(
     private val repository: DespesaRepository,
     private val manager: EntityManager,
-    private val categoriaDuplicadaNoMesValidator: CategoriaDuplicadaNoMesValidator
+    private val categoriaValidator: CategoriaDuplicadaNoMesValidator
 ) {
 
     private fun validarCategoriaDuplicadaNoMes(despesa: Despesa) {
@@ -56,7 +56,7 @@ class DespesaController(
     @Transactional
     fun criar(@Body @Valid request: NovaDespesaRequest): HttpResponse<DespesaResponse> {
         val despesa = request.toModel(manager)
-        categoriaDuplicadaNoMesValidator.validarCategoriaDuplicadaNoMes(
+        categoriaValidator.validarCategoriaDuplicadaNoMes(
             despesa.categoria,
             despesa.realizadaEm,
             despesa::class.qualifiedName!!

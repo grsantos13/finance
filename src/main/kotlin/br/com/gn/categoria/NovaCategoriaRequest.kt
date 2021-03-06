@@ -11,10 +11,16 @@ data class NovaCategoriaRequest(
     @field:Unique(field = "nome", domainClass = Categoria::class)
     val nome: String,
     @field:NotNull
-    val umaPorMes: Boolean
+    val umaPorMes: Boolean,
+    @field:NotNull
+    val movimento: Movimento
 ) {
     fun toModel(): Categoria {
-        return Categoria(nome = nome, umaPorMes = umaPorMes)
+        return Categoria(
+            nome = nome,
+            umaPorMes = umaPorMes,
+            movimento = movimento
+        )
     }
 }
 

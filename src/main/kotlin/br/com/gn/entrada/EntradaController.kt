@@ -18,14 +18,14 @@ import javax.validation.Valid
 class EntradaController(
     private val repository: EntradaRepository,
     private val entityManager: EntityManager,
-    private val categoriaDuplicadaNoMesValidator: CategoriaDuplicadaNoMesValidator
+    private val categoriaValidator: CategoriaDuplicadaNoMesValidator
 ) {
 
     @Post
     @Transactional
     fun cadastrar(@Body @Valid request: NovaEntradaRequest): HttpResponse<EntradaResponse> {
         val entrada = request.toModel(entityManager)
-        categoriaDuplicadaNoMesValidator.validarCategoriaDuplicadaNoMes(
+        categoriaValidator.validarCategoriaDuplicadaNoMes(
             entrada.categoria,
             entrada.realizadaEm,
             entrada::class.qualifiedName!!
