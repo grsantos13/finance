@@ -2,6 +2,7 @@ package br.com.gn.despesa
 
 import br.com.gn.pagamento.FormaDePagamento
 import br.com.gn.pagamento.StatusPagamento
+import br.com.gn.shared.validation.CategoriaDuplicadaNoMesValidator
 import io.micronaut.data.model.Page
 import io.micronaut.data.model.Pageable
 import io.micronaut.http.HttpResponse
@@ -24,6 +25,7 @@ import javax.validation.Valid
 class DespesaController(
     private val repository: DespesaRepository,
     private val manager: EntityManager,
+    private val categoriaDuplicadaNoMesValidator: CategoriaDuplicadaNoMesValidator
 ) {
 
     private fun validarCategoriaDuplicadaNoMes(despesa: Despesa) {
@@ -54,7 +56,11 @@ class DespesaController(
     @Transactional
     fun criar(@Body @Valid request: NovaDespesaRequest): HttpResponse<DespesaResponse> {
         val despesa = request.toModel(manager)
-        validarCategoriaDuplicadaNoMes(despesa)
+        categoriaDuplicadaNoMesValidator.validarCategoriaDuplicadaNoMes(
+            despesa.categoria,
+            despesa.realizadaEm,
+            despesa::class.qualifiedName!!
+        )
         var status = request.statusPagamento
         var primeiroVencimento: LocalDate = request.vencimento ?: LocalDate.now()
 

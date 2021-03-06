@@ -1,5 +1,6 @@
 package br.com.gn.entrada
 
+import br.com.gn.shared.validation.CategoriaDuplicadaNoMesValidator
 import io.micronaut.data.model.Page
 import io.micronaut.data.model.Pageable
 import io.micronaut.http.HttpResponse
@@ -16,13 +17,19 @@ import javax.validation.Valid
 @Controller("/entradas")
 class EntradaController(
     private val repository: EntradaRepository,
-    private val entityManager: EntityManager
+    private val entityManager: EntityManager,
+    private val categoriaDuplicadaNoMesValidator: CategoriaDuplicadaNoMesValidator
 ) {
 
     @Post
     @Transactional
     fun cadastrar(@Body @Valid request: NovaEntradaRequest): HttpResponse<EntradaResponse> {
         val entrada = request.toModel(entityManager)
+        categoriaDuplicadaNoMesValidator.validarCategoriaDuplicadaNoMes(
+            entrada.categoria,
+            entrada.realizadaEm,
+            entrada::class.qualifiedName!!
+        )
         repository.save(entrada)
         return HttpResponse.created(EntradaResponse(entrada))
     }
