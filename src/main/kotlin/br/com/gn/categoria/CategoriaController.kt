@@ -2,13 +2,7 @@ package br.com.gn.categoria
 
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus.NOT_FOUND
-import io.micronaut.http.annotation.Body
-import io.micronaut.http.annotation.Controller
-import io.micronaut.http.annotation.Delete
-import io.micronaut.http.annotation.Get
-import io.micronaut.http.annotation.PathVariable
-import io.micronaut.http.annotation.Post
-import io.micronaut.http.annotation.QueryValue
+import io.micronaut.http.annotation.*
 import io.micronaut.http.exceptions.HttpStatusException
 import io.micronaut.validation.Validated
 import javax.validation.Valid
@@ -26,8 +20,9 @@ class CategoriaController(private val repository: CategoriaRepository) {
     }
 
     @Get
-    fun buscar(@QueryValue(defaultValue = "") nome: String) : HttpResponse<List<CategoriaResponse>>{
-        val list = repository.findAll().map(::CategoriaResponse)
+    fun buscar(@QueryValue(defaultValue = "") nome: String,
+    @QueryValue movimentos: List<Movimento>) : HttpResponse<List<CategoriaResponse>>{
+        val list = repository.findByMovimentoIn(movimentos).map(::CategoriaResponse)
         return HttpResponse.ok(list)
     }
 

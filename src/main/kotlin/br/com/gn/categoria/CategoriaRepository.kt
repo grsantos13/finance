@@ -4,4 +4,6 @@ import io.micronaut.data.annotation.Repository
 import io.micronaut.data.jpa.repository.JpaRepository
 
 @Repository
-interface CategoriaRepository : JpaRepository<Categoria, Long>
+interface CategoriaRepository : JpaRepository<Categoria, Long> {
+    fun findByMovimentoIn(movimentos: List<Movimento>): List<Categoria>
+}
