@@ -10,11 +10,13 @@ import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.exceptions.HttpStatusException
+import io.micronaut.validation.Validated
 import java.time.LocalDate
 import javax.persistence.EntityManager
 import javax.transaction.Transactional
 import javax.validation.Valid
 
+@Validated
 @Controller("/despesas/fixas")
 class NovaDespesaFixaController(
     private val manager: EntityManager,
