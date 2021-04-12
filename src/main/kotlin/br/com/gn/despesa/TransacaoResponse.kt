@@ -1,4 +1,4 @@
-package br.com.gn.despesa.transacao
+package br.com.gn.despesa
 
 import com.fasterxml.jackson.annotation.JsonFormat
 

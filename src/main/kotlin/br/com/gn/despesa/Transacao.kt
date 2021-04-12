@@ -1,4 +1,4 @@
-package br.com.gn.despesa.transacao
+package br.com.gn.despesa
 
 import br.com.gn.despesa.Despesa
 import br.com.gn.pagamento.StatusPagamento

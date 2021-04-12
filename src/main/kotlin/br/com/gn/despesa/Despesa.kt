@@ -3,7 +3,6 @@ package br.com.gn.despesa
 import br.com.gn.cartao.Cartao
 import br.com.gn.categoria.Categoria
 import br.com.gn.conta.Conta
-import br.com.gn.despesa.transacao.Transacao
 import br.com.gn.pagamento.FormaDePagamento
 import br.com.gn.pagamento.StatusPagamento
 import java.math.BigDecimal
