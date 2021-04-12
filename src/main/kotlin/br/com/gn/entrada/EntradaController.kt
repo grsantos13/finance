@@ -4,11 +4,9 @@ import br.com.gn.shared.validation.CategoriaDuplicadaNoMesValidator
 import io.micronaut.data.model.Page
 import io.micronaut.data.model.Pageable
 import io.micronaut.http.HttpResponse
-import io.micronaut.http.annotation.Body
-import io.micronaut.http.annotation.Controller
-import io.micronaut.http.annotation.Get
-import io.micronaut.http.annotation.Post
+import io.micronaut.http.annotation.*
 import io.micronaut.validation.Validated
+import java.time.LocalDate
 import javax.persistence.EntityManager
 import javax.transaction.Transactional
 import javax.validation.Valid
@@ -36,8 +34,20 @@ class EntradaController(
 
     @Get("/fixas")
     @Transactional
-    fun buscaEntradasFixas(): HttpResponse<List<EntradaResponse>> {
-        val entradasFixas = repository.findByFixa(true)
+    fun buscaEntradasFixas(@QueryValue(defaultValue = "false") variavel: Boolean): HttpResponse<List<EntradaResponse>> {
+        val start = LocalDate.now().minusMonths(1).run {
+            LocalDate.of(year, month, 1)
+        }
+        val end = with(start) {
+            LocalDate.of(year, month, lengthOfMonth())
+        }
+
+        val entradasFixas = repository.findByFixaAndValorVariavelAndRealizadaEmBetween(
+            fixa = true,
+            valorVariavel = variavel,
+            start = start,
+            end = end
+        )
             .map { entrada -> EntradaResponse(entrada) }
         return HttpResponse.ok(entradasFixas)
     }

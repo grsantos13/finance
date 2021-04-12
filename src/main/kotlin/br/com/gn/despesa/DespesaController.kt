@@ -7,10 +7,7 @@ import io.micronaut.data.model.Page
 import io.micronaut.data.model.Pageable
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus.PRECONDITION_FAILED
-import io.micronaut.http.annotation.Body
-import io.micronaut.http.annotation.Controller
-import io.micronaut.http.annotation.Get
-import io.micronaut.http.annotation.Post
+import io.micronaut.http.annotation.*
 import io.micronaut.http.exceptions.HttpStatusException
 import io.micronaut.validation.Validated
 import java.time.LocalDate
@@ -118,8 +115,8 @@ class DespesaController(
 
     @Get("/fixas")
     @Transactional
-    fun buscaDespesasFixas(): HttpResponse<List<DespesaResponse>> {
-        val contasFixas = repository.findByFixa(true)
+    fun buscaDespesasFixas(@QueryValue(defaultValue = "false") variavel: Boolean): HttpResponse<List<DespesaResponse>> {
+        val contasFixas = repository.findByFixaAndValorVariavel(true, variavel)
             .map { despesa -> DespesaResponse(despesa) }
         return HttpResponse.ok(contasFixas)
     }
